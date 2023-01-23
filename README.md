@@ -2,6 +2,11 @@
 
 Zabbix template for letsencrypt certificates monitoring.
 
+
+## Version 2023-01-23
+- Convert scripts to python3 - tested with zabbix 6.0.6
+
+
 ## Version 2019-04-30
 - Ignore files in cert folder (0.32 certbot puts a readme file in that folder)
 

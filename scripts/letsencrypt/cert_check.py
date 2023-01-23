@@ -10,18 +10,18 @@ def days_left(cert):
     if os.path.isfile(cert):
         try:
             end_date = subprocess.check_output(
-                'openssl x509 -enddate -noout -in ' + cert, shell=True).replace('\n', '').split('=')[1]
+                'openssl x509 -enddate -noout -in ' + cert, shell=True).decode('utf-8').replace('\n', '').split('=')[1]
             end_date_unix_time = subprocess.check_output(
-                'date -d "' + end_date + '" +%s', shell=True).replace('\n', '')
+                'date -d "' + end_date + '" +%s', shell=True).decode('utf-8').replace('\n', '')
         except subprocess.CalledProcessError:
-            print 'ZBX_NOTSUPPORTED'
+            print('ZBX_NOTSUPPORTED')
         days_left = (int(end_date_unix_time) - int(time.time())) / 86400
         if days_left < 0:
-            print 0
+            print(0)
         else:
-            print days_left
+            print(int(round(days_left,0)))
     else:
-        print 'ZBX_NOTSUPPORTED'
+        print('ZBX_NOTSUPPORTED')
 
 
 def main():

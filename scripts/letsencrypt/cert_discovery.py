@@ -5,7 +5,7 @@ import os
 
 def main():
     cert_path = '/etc/letsencrypt/live/'
-    domains_list = filter(lambda x: os.path.isdir(os.path.join(cert_path, x)), os.listdir(cert_path))
+    domains_list = list(filter(lambda x: os.path.isdir(os.path.join(cert_path, x)), os.listdir(cert_path)))
     data = ''
     count = 1
     for domain in domains_list:
@@ -18,7 +18,7 @@ def main():
             else:
                 data += '{"{#DOMAIN}": "' + domain + '"}]}'
             count += 1
-    print data
+    print(data)
 
 
 if __name__ == '__main__':
