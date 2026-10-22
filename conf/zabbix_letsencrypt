@@ -1,3 +1,11 @@
-Cmnd_Alias ZABB = /etc/zabbix/scripts/letsencrypt/cert_discovery.py, /etc/zabbix/scripts/letsencrypt/cert_check.py
+# sudo rights for the Zabbix agent (copy to /etc/sudoers.d/zabbix_letsencrypt, mode 0440).
+#
+# Each script is pinned to the arguments the template passes:
+#   ""      = no arguments at all
+#   ^...$   = regular expression over the whole argument string (needs sudo >= 1.9.10, e.g.
+#             Debian 12+, Ubuntu 22.10+; check with "sudo -V"). On older sudo drop the regex
+#             (cert_check.py also validates its argument itself).
+# Do not allow the scripts with arbitrary arguments: they run as root.
 Defaults:zabbix !requiretty
-zabbix ALL=NOPASSWD: ZABB
+zabbix ALL=(root) NOPASSWD: /etc/zabbix/scripts/letsencrypt/cert_discovery.py ""
+zabbix ALL=(root) NOPASSWD: /etc/zabbix/scripts/letsencrypt/cert_check.py ^[A-Za-z0-9][A-Za-z0-9.-]{0,252}$
