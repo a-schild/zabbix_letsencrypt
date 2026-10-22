@@ -1,25 +1,27 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
+"""Low-level discovery of certbot lineages (Zabbix item letsencrypt_cert_discovery).
 
+Run as root through sudo, without arguments. Lists every directory under
+/etc/letsencrypt/live that holds a cert.pem (certbot also puts a README file there).
+The JSON is built with json.dumps; the earlier string concatenation left it unclosed
+when the last directory entry was not a certificate.
+"""
+import json
 import os
+
+LIVE = "/etc/letsencrypt/live"
 
 
 def main():
-    cert_path = '/etc/letsencrypt/live/'
-    domains_list = list(filter(lambda x: os.path.isdir(os.path.join(cert_path, x)), os.listdir(cert_path)))
-    data = ''
-    count = 1
-    for domain in domains_list:
-        cert = cert_path + domain + '/cert.pem'
-        if os.path.isfile(cert):
-            if count == 1:
-                data += '{"data": ['
-            if not count == len(domains_list):
-                data += '{"{#DOMAIN}": "' + domain + '"}, '
-            else:
-                data += '{"{#DOMAIN}": "' + domain + '"}]}'
-            count += 1
-    print(data)
+    try:
+        names = sorted(os.listdir(LIVE))
+    except OSError:
+        names = []
+    data = [{"{#DOMAIN}": n} for n in names
+            if not os.path.islink(os.path.join(LIVE, n))
+            and os.path.isfile(os.path.join(LIVE, n, "cert.pem"))]
+    print(json.dumps({"data": data}))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
